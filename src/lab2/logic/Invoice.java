@@ -8,11 +8,15 @@ import java.util.Map;
 @Local
 public interface Invoice {
 
-    enum State {OPEN , CLOSED}
+    enum State
+    {
+        OPEN,
+        CLOSED
+    }
 
     void addProduct(ProductPOJO productPOJO, int quantity);
 
-    void removeProduct(ProductPOJO productPOJO, int quantity);
+    boolean removeProduct(ProductPOJO productPOJO, int quantity);
 
     Map<ProductPOJO , Integer> getProducts();
 
