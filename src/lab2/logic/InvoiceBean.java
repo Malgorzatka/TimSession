@@ -62,12 +62,21 @@ public class InvoiceBean implements Invoice {
 
     @Override
     public double calculateInvoice() {
-        return 0;
+        Iterator iterator = MapProduct.keySet().iterator();
+        ProductPOJO product;
+        double out = 0;
+        while (iterator.hasNext() )
+        {
+            product = (ProductPOJO) iterator.next();
+            out += product.getPrice() * MapProduct.get(product);
+        }
+        return out;
     }
 
     @Override
     public double calculateTax() {
-        return 0;
+
+        return calculateInvoice() *0.23;
     }
 
     @Override

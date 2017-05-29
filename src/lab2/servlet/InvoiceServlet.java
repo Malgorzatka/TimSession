@@ -30,11 +30,7 @@ public class InvoiceServlet extends HttpServlet {
             return;
         }
         //sprawdzenie czy faktura jestr otwarat
-        if (invoice.getState() == Invoice.State.CLOSED ) {
-            response.setStatus(409);
-            response.getWriter().write("Faktura zamknięta"+invoice.getState().toString() +" "+ invoice.hashCode());
-            return;
-        }
+
         //response.getWriter().append(invoice.getState().toString() +" "+ invoice.hashCode());
         //sprawdzenie acion type
 
@@ -54,6 +50,11 @@ public class InvoiceServlet extends HttpServlet {
             switch(actionType)
             {
                 case "addProduct":
+                    if (invoice.getState() == Invoice.State.CLOSED ) {
+                        response.setStatus(409);
+                        response.getWriter().write("Faktura zamknięta"+invoice.getState().toString() +" "+ invoice.hashCode());
+                        return;
+                    }
                     response.getWriter().append(invoice.getState().toString() +" "+ invoice.hashCode());
                     String productCode = checkParameter(request,"productCode", response );//request.getParameter("productCode");
                     if(productCode == null) return;
@@ -88,6 +89,11 @@ public class InvoiceServlet extends HttpServlet {
                     break;
 
                 case "removeProduct":
+                    if (invoice.getState() == Invoice.State.CLOSED ) {
+                        response.setStatus(409);
+                        response.getWriter().write("Faktura zamknięta"+invoice.getState().toString() +" "+ invoice.hashCode());
+                        return;
+                    }
                     response.getWriter().append(invoice.getState().toString() +" "+ invoice.hashCode());
                     productCode = checkParameter(request,"productCode", response );//request.getParameter("productCode");
                     if(productCode == null) return;
@@ -125,15 +131,17 @@ public class InvoiceServlet extends HttpServlet {
                     break;
                 case "showInvoice":
 
+                    response.getWriter().append("\nFaktura:" + invoice.hashCode() + " " + invoice.getState().toString() +":\n" + invoice.getProducts() );
+                    response.getWriter().append("\nWartosc faktury:"+invoice.calculateInvoice());
+                    response.getWriter().append("\nWartosc naliczongo podatku:" + invoice.calculateTax());
+
                     break;
                 case "closeInvoice":
                     invoice.closeInvoice();
                     response.setStatus(200);
                     response.getWriter().append("\nZamknięto sesje" + invoice.hashCode() + "\n" + invoice.getProducts() );
                     break;
-
                 default:
-
                     response.setStatus(400);
                     response.getWriter().write("bad action type in post");
             }
